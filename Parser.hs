@@ -5,12 +5,15 @@ import Data.Char (isAlphaNum, isLower, isSpace, isUpper)
 import Debug.Trace
 
 {- The following is the description of CFG that is currently supported.
- - Currently it requires all brackets.
+ - Note that it's important for the grammar to not have any left-recursion.
 
-    <term>        ::= <variable>
-                    | '\' <variable> '.' <term>    (* abstraction *)
-                    | <term> <term>                (* application *)
-                    | '(' <term> ')'               (* parenthesis *)
+    <term>        ::= <atom> <term>              (* application *)
+                    | <atom>                     (* abstraction, variable or term in paretheses *)
+
+    <atom>        ::= '(' <term> ')'             (* parentheses *)
+                    | <variable>                 (* variable *)
+                    | '\' <variable> '.' <term>  (* abstraction *)
+
     <variable>    ::= 'a' | 'b' | ... | 'z'
 -}
 
@@ -49,12 +52,19 @@ lowerParser = charPredParser isLower
 variableParser :: Parser String
 variableParser = (: []) <$> lowerParser
 
+atomParser :: Parser Term
+atomParser =
+  charParser '(' *> termParser <* charParser ')'
+    <|> Var <$> variableParser
+    <|> Abs <$> (charParser '\\' *> variableParser <* charParser '.') <*> termParser
+
+buildApplication :: [Term] -> Term
+buildApplication (s : t : rest) = foldl App (App s t) rest
+
 termParser :: Parser Term
 termParser =
-  charParser '(' *> termParser <* charParser ')'
-    <|> Abs <$> (charParser '\\' *> variableParser <* charParser '.') <*> termParser
-    <|> App <$> termParser <*> termParser
-    <|> Var <$> variableParser
+  buildApplication <$> ((:) <$> atomParser <*> ((:) <$> atomParser <*> many atomParser))
+    <|> atomParser
 
 parse :: String -> Maybe Term
 parse s = do
