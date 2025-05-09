@@ -1,0 +1,6 @@
+# dune init proj evaluator
+# OCAMLPARAM: unset
+# Shared cache: enabled-except-user-rules
+# Shared cache location: /home/katzper/.cache/dune/db
+# Workspace root: /home/katzper/PF/lambda-terms-evaluator/ocaml/evaluator
+# Auto-detected concurrency: 8
