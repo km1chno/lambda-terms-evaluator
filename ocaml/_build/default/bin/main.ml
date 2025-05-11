@@ -28,7 +28,7 @@ let variable_parser : char parser =
    | _ -> None
 
 let rec term_parser_l () : term parser =
-  char_parser '(' *> term_parser_l
+  char_parser '(' *> term_parser_l ()
   <* char_parser ')'
   <|> (build_app
       <$> (char_parser '(' *> term_parser_l () <* char_parser ')')

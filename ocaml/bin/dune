@@ -1,4 +1,5 @@
 (executable
  (public_name evaluator)
  (name main)
- (libraries evaluator))
+ (libraries evaluator)
+ (flags (:standard -w -a)))
