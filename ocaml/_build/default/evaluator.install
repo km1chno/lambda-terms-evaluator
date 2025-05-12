@@ -1,8 +1,0 @@
-lib: [
-  "_build/install/default/lib/evaluator/META"
-  "_build/install/default/lib/evaluator/dune-package"
-  "_build/install/default/lib/evaluator/opam"
-]
-bin: [
-  "_build/install/default/bin/evaluator"
-]
