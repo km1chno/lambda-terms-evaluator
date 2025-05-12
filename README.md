@@ -1,2 +1,3 @@
-# lambda-terms-evaluator
-A simple evaluator of untyped lambda terms in Haskell and OCaml
+# Lambda terms evaluator
+
+Two implementations of a simple untyped lambda terms evaluator in Haskell and OCaml.
