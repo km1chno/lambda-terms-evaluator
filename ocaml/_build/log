@@ -13,7 +13,4 @@
 #  ; build_dir = In_build_dir "default"
 #  ; instrument_with = []
 #  }
-$ /home/katzper/.opam/default/bin/ocamlc.opt -config > /tmp/dune_17f007_output
-$ (cd _build/default && /home/katzper/.opam/default/bin/ocamldep.opt -modules -impl bin/main.ml) > _build/default/bin/.main.eobjs/dune__exe__Main.impl.d
-$ (cd _build/default && /home/katzper/.opam/default/bin/ocamlopt.opt -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -a -g -I bin/.main.eobjs/byte -I bin/.main.eobjs/native -I lib/.evaluator.objs/byte -I lib/.evaluator.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o bin/.main.eobjs/native/dune__exe__Main.cmx -c -impl bin/main.ml)
-$ (cd _build/default && /home/katzper/.opam/default/bin/ocamlopt.opt -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -a -g -o bin/main.exe lib/evaluator.cmxa bin/.main.eobjs/native/dune__exe.cmx bin/.main.eobjs/native/dune__exe__Parser.cmx bin/.main.eobjs/native/dune__exe__Main.cmx)
+$ /home/katzper/.opam/default/bin/ocamlc.opt -config > /tmp/dune_bb0824_output

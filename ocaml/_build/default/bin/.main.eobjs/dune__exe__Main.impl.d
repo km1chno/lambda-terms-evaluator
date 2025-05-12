@@ -1,1 +1,1 @@
-bin/main.ml: Char Parser Printf String
+bin/main.ml: List Parser Printf String
