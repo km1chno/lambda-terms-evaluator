@@ -14,3 +14,9 @@ let rec show_term (t : term) : string =
   | Abs (x, t) -> "Abs " ^ String.make 1 x ^ " [" ^ show_term t ^ "]"
   | App (s, t) -> "App [" ^ show_term s ^ "] [" ^ show_term t ^ "]"
   | Var x -> "Var " ^ String.make 1 x
+
+let rec term_to_string (t : term) : string =
+  match t with
+  | Abs (x, t) -> "\\" ^ String.make 1 x ^ "." ^ term_to_string t
+  | App (s, t) -> "(" ^ term_to_string s ^ ")(" ^ term_to_string t ^ ")"
+  | Var x -> String.make 1 x
