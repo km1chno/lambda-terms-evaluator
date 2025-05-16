@@ -1,4 +1,4 @@
 ```
 dune build
-dune exec ./main.exe
+dune exec ./main.exe <filename>
 ```
