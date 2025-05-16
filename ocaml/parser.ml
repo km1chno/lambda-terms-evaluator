@@ -76,6 +76,12 @@ let variable_parser : string parser =
 let rec term_parser : term parser =
  fun s ->
   let termInBrackets = seq_parser "(" *> term_parser <* seq_parser ")" in
+  let macro =
+    build_macro
+    <$> (seq_parser "let" *> variable_parser <* seq_parser "=")
+    <*> (term_parser <* seq_parser ";;")
+    <*> term_parser
+  in
   let application =
     build_app
     <$> (seq_parser "(" *> term_parser <* seq_parser ")")
@@ -87,7 +93,7 @@ let rec term_parser : term parser =
     <*> term_parser
   in
   let variable = build_var <$> variable_parser in
-  (abstraction <|> application <|> termInBrackets <|> variable) s
+  (macro <|> abstraction <|> application <|> termInBrackets <|> variable) s
 
 (* Helping fuction to run the parser *)
 let parse_term (s : string) : term option =
