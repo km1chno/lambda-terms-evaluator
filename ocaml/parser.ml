@@ -53,11 +53,6 @@ open Parser
 open Common
 open String
 
-let list_to_string (seq : char list) : string = String.of_seq (List.to_seq seq)
-
-let is_alphanumeric (c : char) =
-  ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9')
-
 let alphanumeric_parser : char parser =
  fun s ->
   match List.of_seq (String.to_seq s) with
@@ -70,30 +65,51 @@ let seq_parser (z : string) : string parser =
     Some (z, sub s (length z) (length s - length z))
   else None
 
+let whitespace_parser : char parser =
+ fun s ->
+  match List.of_seq (String.to_seq s) with
+  | c :: rest when is_whitespace c -> Some (c, list_to_string rest)
+  | _ -> None
+
 let variable_parser : string parser =
   list_to_string <$> many1 alphanumeric_parser
 
+(*
+   <term> := <atom> <atom>+                                                    -- chain of applications
+           | <atom>                                                            -- term that has no application on top level
+   <atom> := "(" <term> ")"                                                    -- parenthesis
+           | "let" (\w)+ <term> (\w)* "=" (\w)* <term> (\w)* ";;" (\w)* <term> -- macro
+           | <variable>                                                        -- variable
+           | "λ" (\w)* <variable> (\w)* "." (\w)* <term>                       -- abstraction 
+*)
+
 let rec term_parser : term parser =
+ fun s ->
+  let application =
+    build_app_chain
+    <$> ((fun t -> fun rest -> t :: rest) <$> atom_parser <*> many1 atom_parser)
+  in
+  (application <|> atom_parser) s
+
+and atom_parser : term parser =
  fun s ->
   let termInBrackets = seq_parser "(" *> term_parser <* seq_parser ")" in
   let macro =
     build_macro
-    <$> (seq_parser "let" *> variable_parser <* seq_parser "=")
-    <*> (term_parser <* seq_parser ";;")
-    <*> term_parser
-  in
-  let application =
-    build_app
-    <$> (seq_parser "(" *> term_parser <* seq_parser ")")
-    <*> (seq_parser "(" *> term_parser <* seq_parser ")")
+    <$> (seq_parser "let" *> many1 whitespace_parser *> variable_parser
+        <* many whitespace_parser <* seq_parser "=")
+    <*> (many whitespace_parser *> term_parser
+        <* many whitespace_parser <* seq_parser ";;")
+    <*> many whitespace_parser *> term_parser
   in
   let abstraction =
     build_abs
-    <$> (seq_parser "λ" *> variable_parser <* seq_parser ".")
-    <*> term_parser
+    <$> (seq_parser "λ" *> many whitespace_parser *> variable_parser
+        <* many whitespace_parser <* seq_parser ".")
+    <*> many whitespace_parser *> term_parser
   in
   let variable = build_var <$> variable_parser in
-  (macro <|> abstraction <|> application <|> termInBrackets <|> variable) s
+  (termInBrackets <|> macro <|> variable <|> abstraction) (String.trim s)
 
 (* Helping fuction to run the parser *)
 let parse_term (s : string) : term option =

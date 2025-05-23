@@ -2,6 +2,17 @@ open Parser
 open Common
 open Evaluator
 
+let verbose = ref false
+let filename = ref ""
+
+let speclist =
+  [
+    ("--v", Arg.Set verbose, "Enable verbose mode");
+    ("-f", Arg.Set_string filename, "Input file name");
+  ]
+
+let usage_msg = "Usage: lcevaluator [options]"
+
 let read_file filename =
   let ic = open_in filename in
   let rec read_lines acc =
@@ -14,22 +25,15 @@ let read_file filename =
   in
   read_lines ""
 
-let is_whitespace (c : char) : bool =
-  c == ' ' || c == '\n' || c == '\t' || c == '\r'
-
-let clean_whitespaces (s : string) : string =
-  String.of_seq (Seq.filter (fun c -> not (is_whitespace c)) (String.to_seq s))
-
 (* Main function reading a term on input and parsing it *)
 let () =
-  if Array.length Sys.argv <> 2 then
-    Printf.eprintf "Usage: %s <filename>\n" Sys.argv.(0)
-  else
-    let filename = Sys.argv.(1) in
-    let input = clean_whitespaces (read_file filename) in
-    let output =
-      match parse_term input with
-      | Some term -> term_to_string (evaluate term)
-      | _ -> "parsing error"
-    in
-    Printf.printf "%s\n" output
+  Arg.parse speclist print_endline usage_msg;
+  let input = read_file !filename in
+  let output =
+    match parse_term input with
+    | Some term ->
+        if !verbose then Printf.printf "Parsed term: %s\n" (show_term term);
+        term_to_string (evaluate term)
+    | _ -> "parsing error"
+  in
+  Printf.printf "%s\n" output
