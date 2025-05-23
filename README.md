@@ -1,3 +1,9 @@
-# Lambda terms evaluator
+```
+dune build
+dune exec ./main.exe -- [--v] -f examples/arith.lc
 
-Two implementations of a simple untyped lambda terms evaluator in Haskell and OCaml.
+# TODO
+
+- [] smarter substitution to avoid name conflicts
+- [] test recurrence
+```
