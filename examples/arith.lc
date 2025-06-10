@@ -1,7 +1,7 @@
 let 0 = λs.(λz.z) ;;
-let 1 = λs.(λz.(s)(z)) ;;
-let 2 = λs.(λz.((s)((s)(z)))) ;;
-let succ = λN.(λS.(λZ.(S)(((N)(S))(Z)))) ;;
-let add = λX.(λY.(((X)(succ))(Y))) ;;
+let 1 = λs.(λz.s z) ;;
+let 2 = λs.(λz.((s)(s z))) ;;
+let succ = λN.(λS.(λZ.(S)((N S)(Z)))) ;;
+let add = λX.(λY.((X succ)(Y))) ;;
 
-((add)(2))(2)
+(add 2)(2)
